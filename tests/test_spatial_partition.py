@@ -10,3 +10,6 @@ matrix = np.array([
 ])
 
 print(spatial_partition(matrix))
+
+from geoentropy import batty, karlstrom, leibovici, oneill, shannon, shannon_z
+import numpy as np
