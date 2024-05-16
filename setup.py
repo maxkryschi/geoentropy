@@ -4,7 +4,7 @@ setup(
     name='GeoEntropy',
     version='0.1.0',
     packages=find_packages(),
-    description='A Python package for computing geometric entropy metrics for spatial data in matrix format.',
+    description='A Python package for computing geometric/spatial entropy metrics for data in matrix format.',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
     url='https://github.com/maxkryschi/geoentropy',

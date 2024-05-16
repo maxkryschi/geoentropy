@@ -1,12 +1,17 @@
 from geoentropy import shannon
 import numpy as np
 
-matrix = np.array([
-    [1, 1, 1, 2, 2, 1, 1, 1, 2, 2],
-    [1, 1, 1, 2, 2, 1, 1, 1, 2, 2],
-    [3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-    [4, 4, 4, 4, 4, 1, 1, 1, 2, 2],
-    [4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
+data_matrix = np.array([
+    [1, 2, 1, 3],
+    [2, 1, 3, 3],
+    [1, 1, 2, 2],
+    [3, 3, 1, 1]
 ])
 
-print(shannon(matrix))
+result = shannon(data_matrix)
+
+print("Shannon Entropy:", result['shannon_entropy'])
+print("Entropy Range:", result['shannon_entropy_range'])
+print("Relative Shannon Entropy:", result['relative_shannon_entropy'])
+print("Probability Distribution:\n", result['probability_distribution'])
+print("Variance:", result['variance'])

@@ -1,6 +1,7 @@
 import numpy as np
 import csv
 import matplotlib.pyplot as plt
+import random
 
 
 def _validate_coordinate_columns(coordinate_columns):
@@ -30,6 +31,19 @@ def _determine_matrix_size(all_coordinates):
     return 0, 0
 
 
+def _get_von_neumann_neighborhood(x, y, max_y, max_x):
+    neighbors = []
+    if x > 0:
+        neighbors.append((x - 1, y))
+    if x < max_x - 1:
+        neighbors.append((x + 1, y))
+    if y > 0:
+        neighbors.append((x, y - 1))
+    if y < max_y - 1:
+        neighbors.append((x, y + 1))
+    return neighbors
+
+
 def _fill_matrix(all_coordinates, max_y, max_x, category_values, priority):
     data_matrix = np.zeros((max_y, max_x))
     prioritized_coordinates = all_coordinates[priority]
@@ -39,14 +53,20 @@ def _fill_matrix(all_coordinates, max_y, max_x, category_values, priority):
     for x, y in prioritized_coordinates:
         data_matrix[y, x] = prioritized_value
 
-    # Fill the matrix with the remaining files without overwriting priority values
     for category_index, coordinates in enumerate(all_coordinates):
         if category_index == priority:
             continue
         category_value = category_values[category_index]
         for x, y in coordinates:
-            if data_matrix[y, x] == 0:  # Only fill if the cell is empty
+            if data_matrix[y, x] == 0:
                 data_matrix[y, x] = category_value
+            else:
+                neighbors = _get_von_neumann_neighborhood(x, y, max_y, max_x)
+                random.shuffle(neighbors)
+                for nx, ny in neighbors:
+                    if data_matrix[ny, nx] == 0:
+                        data_matrix[ny, nx] = category_value
+                        break
 
     return data_matrix
 
@@ -60,7 +80,7 @@ def _plot_data_matrix(data_matrix):
     plt.show()
 
 
-def csv_to_matrix(file_paths, coordinate_columns=[0, 1], cell_size=1, plot=False, priority=0):
+def csv_to_matrix(file_paths, coordinate_columns=[0, 1], cell_size=1, plot_output=False, priority=0):
     _validate_coordinate_columns(coordinate_columns)
 
     if not (0 <= priority < len(file_paths)):
@@ -78,7 +98,7 @@ def csv_to_matrix(file_paths, coordinate_columns=[0, 1], cell_size=1, plot=False
     data_matrix = _fill_matrix(all_coordinates, max_y, max_x, category_values,
                                priority) if max_y > 0 and max_x > 0 else np.array([])
 
-    if plot:
+    if plot_output:
         _plot_data_matrix(data_matrix)
 
     return data_matrix

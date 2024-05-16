@@ -1,12 +1,16 @@
 from geoentropy import oneill
 import numpy as np
 
-matrix = np.array([
-    [1, 1, 1, 2, 2, 1, 1, 1, 2, 2],
-    [1, 1, 1, 2, 2, 1, 1, 1, 2, 2],
-    [3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-    [4, 4, 4, 4, 4, 1, 1, 1, 2, 2],
-    [4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
+data_matrix = np.array([
+    [1, 2, 1, np.nan],
+    [2, 1, np.nan, 2],
+    [1, 1, 2, 1],
+    [np.nan, 2, 1, 2]
 ])
 
-print(oneill(matrix))
+result = oneill(data_matrix, plot_output=True)
+
+print("O'Neill Entropy:", result['oneill_entropy'])
+print("Entropy Range:", result['entropy_range'])
+print("Relative O'Neill Entropy:", result['relative_oneill_entropy'])
+print("Probability Distribution:\n", result['probability_distribution'])

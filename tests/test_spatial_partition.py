@@ -1,15 +1,14 @@
 from geoentropy import spatial_partition
 import numpy as np
 
-matrix = np.array([
-    [1, 1, 1, 2, 2, 1, 1, 1, 2, 2],
-    [1, 1, 1, 2, 2, 1, 1, 1, 2, 2],
-    [3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
-    [4, 4, 4, 4, 4, 1, 1, 1, 2, 2],
-    [4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
+data_matrix = np.array([
+    [1, 2, 1, 3],
+    [2, 1, 3, 3],
+    [1, 1, 2, 2],
+    [3, 3, 1, 1]
 ])
 
-print(spatial_partition(matrix))
+result = spatial_partition(data_matrix, partitions=5, cell_size=1, window=None, plot_output=True)
 
-from geoentropy import batty, karlstrom, leibovici, oneill, shannon, shannon_z
-import numpy as np
+print("Partition Coordinates:\n", result['partition_coordinates'])
+print("Data with Partitions:\n", result['data_with_partitions'].head())

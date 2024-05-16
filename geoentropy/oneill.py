@@ -53,9 +53,9 @@ def _calculate_entropy_range(unique_elements):
     return [0, log(len(unique_elements) ** 2)]
 
 
-def oneill(data_matrix, plot=False):
+def oneill(data_matrix, plot_output=False):
     _validate_data_matrix(data_matrix)
-    if plot:
+    if plot_output:
         _plot_data_matrix(data_matrix)
 
     unique_elements = np.unique(data_matrix[~np.isnan(data_matrix)])
