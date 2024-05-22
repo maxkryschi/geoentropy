@@ -8,6 +8,6 @@ from .shannon_z import shannon_z
 from .spatial_partition import spatial_partition
 
 print(
-    "GeoEntropy is in a very early version (0.1.1), no guarantee for correctness. Source code is available at https://github.com/maxkryschi/geoentropy")
+    "GeoEntropy is in a very early version (0.2.0), no guarantee for correctness. Source code is available at https://github.com/maxkryschi/geoentropy")
 
 __all__ = ['batty', 'csv_to_matrix', 'karlstrom', 'leibovici', 'oneill', 'shannon', 'shannon_z', 'spatial_partition']
