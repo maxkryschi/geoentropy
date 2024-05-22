@@ -1,6 +1,7 @@
 # GeoEntropy: A Python Package for Computing Spatial/Geometric Entropy
 
 GeoEntropy is currently in a very early version. There is no guarantee for the accuracy or correctness of the results.
+The [source code is available on GitHub](https://github.com/maxkryschi/geoentropy), contributions are very welcome :-).
 
 GeoEntropy is a Python package designed to compute various entropy measures for spatial data represented in matrices (
 numpy arrays). GeoEntropy is inspired by
@@ -23,20 +24,31 @@ pip install geoentropy
 
 ### Convert CSV-Files to a 2D numpy array
 
-The ```csv_to_matrix``` function converts CSV files containing coordinate data into a 2D numpy array (data matrix).
-Each CSV
-file represents a different category, and the function maps these categories to unique values in the data matrix. It
-includes options for prioritizing certain files and plotting the resulting matrix. If two points from different CSV
-files have the same coordinates, the point from the prioritized file remains in place, while the point from the other
-files is moved randomly to one of the neighboring cells in the von Neumann neighborhood.
+The ```csv_to_matrix``` function converts multiple CSV files, each representing a different category, into a matrix for
+visualization. It processes the coordinates, normalizes them based on the specified cell size, and fills a matrix with
+values representing each category. If two points from different CSV files have the same coordinates, the cell size is
+first set to one tenth. When ```min_cell_size``` is reached, the point from the prioritized CSV file remains in place,
+while points from other CSV files with lower priority are randomly moved to one of the neighboring cells in the von
+Neumann neighborhood.
+
+Parameters:
+* ```file_paths```: List or dictionary of file paths. If a list, default priorities are assigned. If a dictionary, it maps
+file paths to their respective priorities.
+* ```coordinate_columns```: List of two integers specifying the columns in the CSV files that contain the x and y
+coordinates. Default is [0, 1].
+* ```max_cell_size```: Initial size of the cells in the matrix. Default is 1.
+* ```min_cell_size```: Minimum allowable size of the cells. Default is 0.01.
+* ```plot_output```: Boolean indicating whether to plot the resulting matrix. Default is False.
 
 ```python
 from geoentropy import csv_to_matrix
 import numpy as np
 
 file_paths = ['coordinates_category_1.csv', 'coordinates_category_2.csv']
+file_paths_with_priorities = {'coordinates_category_1.csv': 2, 'coordinates_category_2.csv': 1}
 
-data_matrix = csv_to_matrix(file_paths, coordinate_columns=[0, 1], cell_size=1, plot_output=False, priority=0)
+data_matrix = csv_to_matrix(file_paths_with_priorities, coordinate_columns=[0, 1], max_cell_size=1, min_cell_size=0.01,
+                            plot_output=True)
 
 print(data_matrix)
 ```
@@ -44,16 +56,14 @@ print(data_matrix)
 Output:
 
 ```
-[[0. 0. 0. 0. 0. 0. 0. 0. 0. 2.]
- [0. 0. 0. 0. 2. 0. 0. 0. 0. 0.]
- [0. 0. 0. 0. 2. 1. 0. 0. 1. 0.]
- [0. 0. 1. 0. 0. 0. 0. 2. 0. 0.]
- [1. 2. 0. 0. 0. 0. 0. 1. 0. 0.]
- [0. 0. 0. 1. 0. 0. 2. 0. 0. 0.]
- [0. 0. 0. 0. 0. 0. 0. 0. 2. 1.]
- [0. 0. 2. 0. 0. 0. 1. 0. 0. 0.]
- [0. 0. 0. 1. 2. 0. 0. 0. 0. 0.]
- [2. 1. 0. 0. 0. 0. 0. 0. 0. 0.]]
+Cell size changed to 0.1 to resolve overlapping points.
+[[0. 0. 0. ... 0. 0. 0.]
+ [0. 0. 0. ... 0. 0. 0.]
+ [0. 0. 0. ... 0. 0. 0.]
+ ...
+ [0. 0. 0. ... 0. 0. 0.]
+ [0. 0. 0. ... 0. 0. 0.]
+ [0. 0. 0. ... 0. 0. 1.]]
 ```
 
 ### Spatial Partitioning
