@@ -41,7 +41,8 @@ def _calculate_batty_entropy(area_data, sub_area_sizes, rescale):
                 "Some sub-areas have size < 1, so they have been internally rescaled to avoid computational issues. The entropy in the output refers to the original area scale.")
     else:
         batty_entropy = np.sum(
-            np.where(area_data['rel_freq'] > 0, area_data['rel_freq'] * np.log(sub_area_sizes / area_data['rel_freq']), 0))
+            np.where(area_data['rel_freq'] > 0, area_data['rel_freq'] * np.log(sub_area_sizes / area_data['rel_freq']),
+                     0))
     return batty_entropy
 
 

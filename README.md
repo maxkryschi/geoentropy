@@ -1,7 +1,8 @@
 # GeoEntropy: A Python Package for Computing Spatial/Geometric Entropy
 
 GeoEntropy is currently in a very early version. There is no guarantee for the accuracy or correctness of the results.
-The [source code is available on GitHub](https://github.com/maxkryschi/geoentropy), contributions are very welcome :-).
+The [source code is available on GitHub](https://github.com/maxkryschi/geoentropy), meaningful contributions are very
+welcome :-).
 
 GeoEntropy is a Python package designed to compute various entropy measures for spatial data represented in matrices (
 numpy arrays). GeoEntropy is inspired by
@@ -24,21 +25,22 @@ pip install geoentropy
 
 ### Convert CSV-Files to a 2D numpy array
 
-The ```csv_to_matrix``` function converts multiple CSV files, each representing a different category, into a matrix for
+The `csv_to_matrix` function converts multiple CSV files, each representing a different category, into a matrix for
 visualization. It processes the coordinates, normalizes them based on the specified cell size, and fills a matrix with
 values representing each category. If two points from different CSV files have the same coordinates, the cell size is
-first set to one tenth. When ```min_cell_size``` is reached, the point from the prioritized CSV file remains in place,
+first set to one tenth. When `min_cell_size` is reached, the point from the prioritized CSV file remains in place,
 while points from other CSV files with lower priority are randomly moved to one of the neighboring cells in the von
 Neumann neighborhood.
 
 Parameters:
-* ```file_paths```: List or dictionary of file paths. If a list, default priorities are assigned. If a dictionary, it maps
-file paths to their respective priorities.
-* ```coordinate_columns```: List of two integers specifying the columns in the CSV files that contain the x and y
-coordinates. Default is [0, 1].
-* ```max_cell_size```: Initial size of the cells in the matrix. Default is 1.
-* ```min_cell_size```: Minimum allowable size of the cells. Default is 0.01.
-* ```plot_output```: Boolean indicating whether to plot the resulting matrix. Default is False.
+
+* `file_paths`: List or dictionary of file paths. If a list, default priorities are assigned. If a dictionary, it
+  maps file paths to their respective priorities.
+* `coordinate_columns`: List of two integers specifying the columns in the CSV files that contain the x and y
+  coordinates. Default is [0, 1].
+* `max_cell_size`: Initial size of the cells in the matrix. Default is 1.
+* `min_cell_size`: Minimum allowable size of the cells. Default is 0.01.
+* `plot_output`: Boolean indicating whether to plot the resulting matrix. Default is False.
 
 ```python
 from geoentropy import csv_to_matrix
@@ -68,9 +70,23 @@ Cell size changed to 0.1 to resolve overlapping points.
 
 ### Spatial Partitioning
 
-The ```spatial_partition``` function partitions a 2D data matrix into spatial regions using Voronoi tessellation, which
-assigns each cell in the grid to the nearest partition center. This process helps analyze spatial data by grouping cells
-based on their proximity to these centers.
+The `spatial_partition` function divides a given 2D data matrix into spatial partitions using Voronoi tessellation. This
+helps to analyze the spatial distribution of data by assigning each grid point to a partition based on proximity to
+randomly generated or specified partition centers.
+
+### Parameters:
+
+* `data_matrix`: A 2D numpy array representing the grid data. The function validates that the input is a 2D matrix.
+* `partitions`: The number of partitions to create. Can be an integer for random generation or a list of coordinates for
+  specific partition centers. Default is `10`.
+* `cell_size`: The size of the cells in the matrix grid. Default is `1`.
+* `window`: Optional parameter to specify the observation window as a tuple (min_x, min_y, max_x, max_y). Default
+  is `None`.
+* `plot_output`: Boolean indicating whether to plot the partitioned data overlaid with Voronoi diagrams. Default
+  is `True`.
+
+The function returns a dictionary containing the partition coordinates and the data with assigned partitions, which can
+be further used for spatial analysis or entropy calculations.
 
 ```python
 from geoentropy import spatial_partition
@@ -109,10 +125,20 @@ Data with Partitions:
 
 ### Batty Entropy
 
-The ```batty``` function calculates the Batty entropy, a measure of spatial segregation, for a given 2D data matrix.
-It
-processes the data through validation, dichotomization, spatial partitioning, and finally calculates the entropy and its
-range.
+The `batty` function calculates Batty's entropy, a measure of spatial segregation, for a given 2D data matrix. This
+entropy measure helps to understand the spatial distribution and organization of a particular category within the
+matrix. The function supports
+rescaling to handle small area sizes and can optionally visualize the partitioned data.
+
+### Parameters:
+
+* `data_matrix`: A 2D numpy array representing the grid data. The function validates that the input is a 2D matrix.
+* `category`: The category to analyze within the data matrix. Default is `1`.
+* `cell_size`: The size of the cells in the matrix for partitioning. Default is `1`.
+* `partitions`: The number of partitions to divide the data into. Default is `10`.
+* `window`: Optional parameter to specify a window size for partitioning. Default is `None`.
+* `rescale`: Boolean indicating whether to rescale small area sizes to avoid computational issues. Default is `True`.
+* `plot_output`: Boolean indicating whether to plot the resulting partitions and their distribution. Default is `True`.
 
 ```python
 from geoentropy import batty
@@ -142,9 +168,28 @@ Relative Batty Entropy: 0.9975040776922705
 
 ### Karlström Entropy
 
-The ```karlstrom``` function calculates the Karlström entropy, a measure of spatial segregation, for a given 2D data
-matrix. The function processes the data through validation, dichotomization, spatial partitioning, and entropy
-calculation while considering neighbor relationships.
+The `karlstrom` function calculates Karlstrom's entropy, a measure of spatial segregation, for a given 2D data matrix.
+This entropy measure helps to understand the spatial distribution and organization of a particular category within the
+matrix. The function allows specifying the method for determining neighbors and can optionally visualize the partitioned
+data.
+
+### Parameters:
+
+* `data_matrix`: A 2D numpy array representing the grid data. The function validates that the input is a 2D matrix.
+* `category`: The category to analyze within the data matrix. Default is `1`.
+* `cell_size`: The size of the cells in the matrix for partitioning. Default is `1`.
+* `partition`: The number of partitions to divide the data into. Default is `10`.
+* `observation_window`: Optional parameter to specify a window size for partitioning. Default is `None`.
+* `neighbors`: The number of neighbors or distance for determining neighbors. Default is `4`.
+* `method`: The method for determining neighbors, either by a specific number ("number") or by a distance ("distance").
+  Default is `"number"`.
+* `plot_output`: Boolean indicating whether to plot the resulting partitions and their distribution. Default is `True`.
+
+The function processes the input data matrix, partitions it using Voronoi tessellation, calculates the frequencies and
+areas of the partitions, and then computes Karlstrom's entropy based on the specified method for determining neighbors.
+It returns a dictionary containing Karlstrom's entropy, the entropy range, the relative Karlstrom entropy, detailed area
+data, and partition coordinates. This provides a comprehensive overview of the spatial segregation and distribution of
+the specified category within the data matrix.
 
 ```python
 from geoentropy import karlstrom
@@ -175,9 +220,23 @@ Relative Karlström Entropy: 0.47763806902672573
 
 ### Leibovici Entropy
 
-The ```leibovici``` function calculates the Leibovici entropy, a measure of spatial organization, for a given
-2D data matrix. This function validates inputs, counts adjacent pairs within a specified critical distance, computes
-entropy, and optionally plots the data matrix.
+The `leibovici` function calculates Leibovici's entropy, a measure of spatial association, for a given 2D data matrix.
+This entropy measure helps to understand the spatial relationships and organization of different categories within the
+matrix based on a specified critical distance.
+
+### Parameters:
+
+* `data_matrix`: A 2D numpy array representing the grid data. The function validates that the input is a 2D matrix.
+* `cell_size`: The size of the cells in the matrix. Can be a scalar or an array specifying the size for each dimension.
+  Default is `1`.
+* `critical_distance`: The critical distance within which to count adjacent pairs. Default is `1`.
+* `plot_output`: Boolean indicating whether to plot the data matrix. Default is `True`.
+
+The function processes the input data matrix, validates the cell size and critical distance, counts adjacent pairs
+within the specified distance, and calculates Leibovici's entropy. It returns a dictionary containing Leibovici's
+entropy, the entropy range, the relative Leibovici entropy, and the probability distribution of observed pairs. The
+function also provides an option to visualize the data matrix, offering a comprehensive view of spatial associations
+within the data.
 
 ```python
 from geoentropy import leibovici
@@ -214,9 +273,19 @@ Probability Distribution:
 
 ### O'Neill Entropy
 
-The ```oneill``` function calculates the O'Neill entropy, a measure of spatial organization, for a
-given 2D data matrix. The function processes the data by validating inputs, collecting adjacent pairs, computing
-entropy, and optionally plotting the data matrix.
+The `oneill` function calculates O'Neill's entropy, a measure of spatial association, for a given 2D data matrix. This
+entropy measure helps to understand the spatial relationships and organization of different categories within the matrix
+by analyzing adjacent pairs of data points.
+
+### Parameters:
+
+* `data_matrix`: A 2D numpy array representing the grid data. The function validates that the input is a 2D matrix.
+* `plot_output`: Boolean indicating whether to plot the data matrix. Default is `False`.
+
+The function processes the input data matrix, collects adjacent pairs of data points, and calculates O'Neill's entropy
+based on the frequency of these pairs. It returns a dictionary containing O'Neill's entropy, the entropy range, the
+relative O'Neill entropy, and the probability distribution of observed pairs. The function also provides an option to
+visualize the data matrix, offering a comprehensive view of spatial associations within the data.
 
 ```python
 from geoentropy import oneill
@@ -252,9 +321,19 @@ Probability Distribution:
 
 ### Shannon Entropy
 
-The ```shannon``` function calculates the Shannon entropy, which quantifies the uncertainty or diversity within a 2D
-data matrix. It processes the data by validating inputs, calculating probabilities of different categories, computing
-the entropy, and determining the variance.
+The `shannon` function calculates Shannon's entropy, a measure of information entropy, for a given data matrix. Unlike
+other entropy measures in this library, Shannon's entropy does not account for spatial relationships; it simply measures
+the uncertainty or diversity of categories within the dataset.
+
+### Parameters:
+
+* `data_matrix`: A numpy array representing the data. The function validates that the input is a non-empty numpy array.
+
+The function processes the input data matrix, calculates the probabilities of each category, and computes Shannon's
+entropy based on these probabilities. It also calculates the variance of the entropy and provides a range for the
+entropy values. The function returns a dictionary containing Shannon's entropy, the entropy range, the relative Shannon
+entropy, the probability distribution of categories, and the variance of the entropy. This provides a comprehensive
+overview of the informational diversity within the data, without considering spatial arrangement.
 
 ```python
 from geoentropy import shannon
@@ -289,10 +368,20 @@ Variance: 0.05362144899780308
 
 ### Shannon Z Entropy
 
-The ```shannon_z``` function calculates the Shannon entropy for pairs of categories in a 2D data matrix. This type of
-entropy quantifies the uncertainty or diversity of category pairs within the data. It is
-important to note that Shannon entropy Z is not a spatial entropy, meaning it does not consider the spatial arrangement
-of elements, only the frequency distribution of category pairs.
+The `shannon_z` function calculates Shannon's entropy for pairs of categories, known as Shannon Z entropy. This measure
+extends Shannon's entropy to consider the distribution of pairs of categories within the data. Similar to Shannon's
+entropy, Shannon Z entropy does not account for spatial relationships.
+
+### Parameters:
+
+* `data_matrix`: A numpy array representing the data. The function validates that the input is a non-empty numpy array.
+
+The function processes the input data matrix, calculates the probabilities of pairs of categories, and computes Shannon
+Z entropy based on these probabilities. It also calculates the variance of the entropy and provides a range for the
+entropy values. The function returns a dictionary containing Shannon Z entropy, the entropy range, the relative Shannon
+Z entropy, the probability distribution of category pairs, and the variance of the entropy. This provides a
+comprehensive overview of the informational diversity of category pairs within the data, without considering spatial
+arrangement.
 
 ```python
 from geoentropy import shannon_z
